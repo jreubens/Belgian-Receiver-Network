@@ -1,0 +1,54 @@
+year,project,scientific_name,detection_count,individual_count
+2012,Boekhoute,Anguilla anguilla,84844,4
+2012,LifeWatch,Gadus morhua,123091,26
+2012,Rivierprik,Lampetra fluviatilis,34084,5
+2013,Boekhoute,Anguilla anguilla,299073,4
+2013,LifeWatch,Gadus morhua,211212,13
+2013,Rivierprik,Lampetra fluviatilis,12477,3
+2014,Albertkanaal,Anguilla anguilla,182300,53
+2014,Albertkanaal,Salmo salar,205816,5
+2014,Boekhoute,Anguilla anguilla,412955,37
+2014,Demer,Petromyzon marinus,378,1
+2014,Demer,Rutilus rutilus,522,2
+2014,LifeWatch,Gadus morhua,178128,8
+2014,Mechelen,Anguilla anguilla,702,1
+2014,Rivierprik,Lampetra fluviatilis,994,1
+2015,Albertkanaal,Anguilla anguilla,453419,57
+2015,Albertkanaal,Salmo salar,21162,3
+2015,Boekhoute,Anguilla anguilla,280525,34
+2015,Demer,Silurus glanis,6759,2
+2015,Demer,Squalius cephalus,465,1
+2015,LifeWatch,Anguilla anguilla,222959,19
+2015,LifeWatch,Gadus morhua,112048,12
+2015,Mechelen,Anguilla anguilla,42,1
+2015,Mechelen,Cyprinus carpio,208,1
+2015,Mechelen,Rutilus rutilus,133,3
+2015,Mechelen,Silurus glanis,3128,7
+2015,PhD JR,Gadus morhua,3159552,37
+2015,PhD JR,Sentinel,165223,9
+2015,Rivierprik,Lampetra fluviatilis,214077,27
+2016,Albertkanaal,Anguilla anguilla,209114,30
+2016,Albertkanaal,Salmo salar,239622,32
+2016,Albertkanaal,Sync tag,275444,11
+2016,Boekhoute,Anguilla anguilla,210251,21
+2016,Demer,Silurus glanis,3351,2
+2016,Demer,Squalius cephalus,9,1
+2016,Fint2015,Alosa fallax,30742,4
+2016,LifeWatch,Anguilla anguilla,126855,12
+2016,LifeWatch,Gadus morhua,44497,13
+2016,Mechelen,Cyprinus carpio,30,1
+2016,Mechelen,Rutilus rutilus,344,2
+2016,Mechelen,Silurus glanis,6717,5
+2016,PhD JR,Gadus morhua,6490247,26
+2016,PhD JR,Sentinel,866013,19
+2016,Rivierprik,Lampetra fluviatilis,88525,10
+2017,Albertkanaal,Anguilla anguilla,227371,14
+2017,Albertkanaal,Salmo salar,1,1
+2017,Boekhoute,Anguilla anguilla,110420,5
+2017,Demer,Silurus glanis,6111,1
+2017,Demer,Squalius cephalus,1478,1
+2017,Flatfish,Pleuronectes platessa,24,1
+2017,LifeWatch,Anguilla anguilla,3303,5
+2017,LifeWatch,Gadus morhua,6,2
+2017,PhD JR,Gadus morhua,4833533,15
+2017,PhD JR,Sentinel,316397,14

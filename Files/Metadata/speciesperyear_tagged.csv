@@ -1,0 +1,45 @@
+year,project,scientific_name,count
+2010,Amsterdam,Anguilla anguilla,20
+2010,PhD JR,Gadus morhua,19
+2010,PhD JR,Sentinel,3
+2011,Boekhoute,Anguilla anguilla,5
+2011,PhD JR,Gadus morhua,22
+2011,PhD JR,Sentinel,13
+2011,Rivierprik,Lampetra fluviatilis,16
+2012,Boekhoute,Anguilla anguilla,99
+2012,Rivierprik,Lampetra fluviatilis,23
+2013,Albertkanaal,Anguilla anguilla,5
+2014,Albertkanaal,Anguilla anguilla,58
+2014,Albertkanaal,Salmo salar,20
+2014,Demer,Petromyzon marinus,2
+2014,Demer,Rutilus rutilus,2
+2014,Demer,Silurus glanis,9
+2014,Demer,Squalius cephalus,3
+2014,LifeWatch,Gadus morhua,17
+2015,Albertkanaal,Anguilla anguilla,38
+2015,Albertkanaal,Salmo salar,42
+2015,Albertkanaal,Sync tag,13
+2015,Fint2015,Alosa fallax,8
+2015,LifeWatch,Anguilla anguilla,44
+2015,LifeWatch,Gadus morhua,42
+2015,Mechelen,Anguilla anguilla,1
+2015,Mechelen,Cyprinus carpio,2
+2015,Mechelen,Platichthys flesus,8
+2015,Mechelen,Rutilus rutilus,4
+2015,Mechelen,Silurus glanis,11
+2016,Albertkanaal,Anguilla anguilla,50
+2016,Albertkanaal,Salmo salar,44
+2016,CodNoise,Built-in,14
+2016,CodNoise,Gadus morhua,14
+2016,Fint2016,Alosa fallax,26
+2016,Flatfish,Limanda limanda,5
+2016,Flatfish,Microstomus kitt,1
+2016,Flatfish,Pleuronectes platessa,3
+2016,LifeWatch,Anguilla anguilla,41
+2016,LifeWatch,Gadus morhua,23
+2017,Albertkanaal,salmo salar,29
+2017,Fint2016,Alosa fallax,5
+2017,LifeWatch,Anguilla anguilla,40
+2017,LifeWatch,Gadus morhua,5
+2017,PhD van der Knaap,Built-in,22
+2017,PhD van der Knaap,Gadus morhua,27
