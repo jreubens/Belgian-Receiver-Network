@@ -42,7 +42,7 @@ channel <-readOGR("Files/Shapefiles/iho", layer = "iho")
 rivers <-readOGR("Files/Shapefiles/Rivers", layer = "BNLF_Water_2004")
 buurlanden <-readOGR("Files/Shapefiles/Buurlanden", layer = "B_Buurlanden_2008")
 netherlands_coast <- readOGR("Files/Shapefiles/netherlands_coast", layer = "world_countries_coasts")
-boundary <-readOGR("Files/Shapefiles/Belgium-border", layer = "bnful")
+boundary <-readOGR("Files/Shapefiles/Belgian-border", layer = "bnful")
 
 
 #Looking at the class, structure and plot of the shapefile allows to better understand the data type. Output is not given in this document due its large size
@@ -88,7 +88,6 @@ Deezfort <- fortify(Deez)
 sandbanks <- readOGR("Files/Shapefiles/Sandbanks/Southernbight_banks.shp")
 sandfort <- fortify(sandbanks)
 
-# Belgian border
 
 #### 1.4 Make a funtion of your map
 # If you have your basic map. Make a fucntion of it, to easily add/update this map.
@@ -117,10 +116,12 @@ ggplot() +
   geom_polygon(aes(x=long, y=lat, group=group), data = netherlands_coastfort, fill = "gray87")+
   geom_path(data = riversfort, aes(x = long, y = lat, group=group), col = "gray98")+
   geom_path(data = Beezfort, aes(x = long, y = lat, group=group), col = "gray18")+
-  geom_path(data = sandfort, aes (x= long, y= lat, group=group), col = "gray87")
+  geom_path(data = sandfort, aes (x= long, y= lat, group=group), col = "gray87")+
+  geom_path(data = boundaryfort,aes (x= long, y= lat, group =group), col = "gray22")
 }  
 
 plot_map()
+
 
 #### 1.4 Add deployment information ####
 # open deployments
@@ -153,8 +154,16 @@ station_count <- deployments %>%
 
 head(station_count)
 
+# Save and filter what is needed for BRN
+setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Output")
+write.csv(station_count, file = "station_count.csv")
+
+setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Metadata")
+station_count_BRN <- read.csv("station_count_BRN.csv", header =T, sep=",")
+
+
 # Thereafter plot the detections
-plot_map() + geom_point(data = station_count, aes(deploy_long,deploy_lat, size = sum_deploy), colour = "red")
+plot_map() + geom_point(data = station_count_BRN, aes(deploy_long,deploy_lat, size = det_count), colour = "red")
 
 ## Overlay Pie-chart
 # first select your data
