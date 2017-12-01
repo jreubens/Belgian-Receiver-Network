@@ -12,6 +12,11 @@
 ##### 1. Making a map of the Southern North Sea, English Channel and the Thames estuary ####
   
 #Combining **ggplot** with the R packages that facilitate the handling of geospatial data, as [maptools](https://cran.r-project.org/web/packages/maptools/maptools.pdf), [rgdal](https://cran.r-project.org/web/packages/rgdal/rgdal.pdf), [rgeos](https://cran.r-project.org/web/packages/rgeos/rgeos.pdf) and [mapproj](https://cran.r-project.org/web/packages/mapproj/mapproj.pdf), enables the construction of simple and complex maps.
+
+#clear environment
+rm(list = ls())
+
+# install needed packages
 install.packages("maptools")
 library(maptools)
 library(ggmap)
@@ -36,6 +41,8 @@ list.files("Shapefiles")
 #The world_bay_gulf folder and file contains the shapefile of the [Southern Bight](http://www.marineregions.org/gazetteer.php?p=details&id=2399). The seavox_v16 folder and file contains the shapefile of the [Thames estuary](http://www.marineregions.org/gazetteer.php?p=details&id=24195).
 #The iho folder and file contains the shapefile of the [English Channel](http://www.marineregions.org/gazetteer.php?p=details&id=2389).
 #Below you can find a ways to import it into the R Environment. The recommended **readOGR()** recognizes the type of spatial data automatically.
+
+setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Shapefiles")
 
 bight <- readOGR("Files/Shapefiles/world_bay_gulf", layer = "world_bay_gulf")
 channel <-readOGR("Files/Shapefiles/iho", layer = "iho")
@@ -172,14 +179,13 @@ species_station <- species %>%
   mutate(sum_ind = sum(individual_count))%>%
   distinct(station_name,.keep_all=TRUE)
 
-head (species_all)
 
 # then link data of station_count to species_station
 species_all <- left_join(species_station, station_count)
-
+head (species_all)
 
 # Next step: define your pie-charts
-test <- filter(species_all,grepl("bpns|BPNS",station_name))
+# test <- filter(species_all,grepl("bpns|BPNS",station_name))
 
 # Pie charts in ggplot maps per receiver
 ## 
@@ -206,17 +212,18 @@ plot <- plotmap() +  geom_scatterpie(aes(x=deploy_lat, y=deploy_long, group=stat
                          'Squalius cephalus'),color=NA, alpha=.8) +
   coord_equal()
 
-plot + geom_scatterpie_legend(species_cast$radius, x=-160, y=-55)
+plot + geom_scatterpie_legend(species_cast$radius, x=-160, y=-55) # geen idee wat x en y hier betekenen..
 
 
 
-pie <- ggplot(test, aes(x="", y=sum_ind, fill=scientific_name))+
+## tweede methode 
+#pie <- ggplot(test, aes(x="", y=sum_ind, fill=scientific_name))+
   ggtitle("Individuals per species per station")+
   geom_bar(width = 1, stat = "identity")+
   facet_wrap(~station_name)+
   coord_polar("y", start=0)
 
-pie
+#pie
 
 
 
@@ -255,16 +262,20 @@ table <- table %>%
 
 heatmap <- ggplot(table, aes(year, scientific_name)) + 
       geom_tile(aes(fill = Observed), colour = "white") + 
-      scale_fill_gradient(low = "white",high = "steelblue")
+      scale_fill_gradient(low = "white",high = "steel blue")
 heatmap
 
-heatmap + theme_grey(base_size = base_size) + 
+
+#improve layout
+
+heatmap + theme_grey(base_size = 11) + 
     labs(x = "", y = "") + 
     scale_x_discrete(expand = c(0, 0)) +
-    scale_y_discrete(expand = c(0, 0)) + 
-    opts(legend.position = "none", axis.ticks = theme_blank(), 
-         axis.text.x = theme_text(size = base_size * 0.8, angle = 330, hjust = 0, colour = "grey50"))
+    scale_y_discrete(expand = c(0, 0)) +
+    theme(axis.text.x = element_text(size = 11, angle = 330, colour = "grey50"))
 
+
+# add numbers to the table
 library(tidyverse)
 
 table2 <- table %>%
