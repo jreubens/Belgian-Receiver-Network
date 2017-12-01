@@ -221,5 +221,57 @@ pie
 
 
 ## occurence facet
+# We want to make an tabe with both info on tagged species and info on detected species.
+# The tagged species will be the values in the table, the detected species will be shown by a color palet (the darker, the more detected...)
+# We will use a type of heatmap to do so...
+# See https://learnr.wordpress.com/2010/01/26/ggplot2-quick-heatmap-plotting/ and https://stackoverflow.com/questions/14290364/heatmap-with-values-ggplot2 for info
+
+# Example data of nba players 
 nba <- read.csv("http://datasets.flowingdata.com/ppg2008.csv")
 nba.m <- melt(nba)
+
+
+# our table
+# First prepare datasets to correct format
+setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Metadata")
+species_det <- read.csv("speciesperyear_count.csv", header =T, sep=",")
+species_tag <- read.csv("speciesperyear_tagged.csv", header = T, sep=",")
+
+species_tag2 <- species_tag %>%
+  filter(project != "Amsterdam")%>%
+  group_by(year,scientific_name)%>%
+  summarise(Tagged = sum(count))
+
+species_det2 <- species_det %>%
+  group_by(year, scientific_name)%>%
+  summarise(Observed = sum(individual_count))
+    
+table <- full_join(species_det2, species_tag2)
+table <- table %>%
+  filter( scientific_name != "Sentinel")%>%
+  filter(scientific_name != "Built-in")%>%
+  filter(scientific_name != "Sync tag")
+
+
+heatmap <- ggplot(table, aes(year, scientific_name)) + 
+      geom_tile(aes(fill = Observed), colour = "white") + 
+      scale_fill_gradient(low = "white",high = "steelblue")
+heatmap
+
+heatmap + theme_grey(base_size = base_size) + 
+    labs(x = "", y = "") + 
+    scale_x_discrete(expand = c(0, 0)) +
+    scale_y_discrete(expand = c(0, 0)) + 
+    opts(legend.position = "none", axis.ticks = theme_blank(), 
+         axis.text.x = theme_text(size = base_size * 0.8, angle = 330, hjust = 0, colour = "grey50"))
+
+library(tidyverse)
+
+table2 <- table %>%
+  tbl_df() %>%
+  rownames_to_column('year') %>%
+  gather(scientific_name, count, -year) %>%
+  mutate(
+    year = factor(year, levels=1:8),
+    scientific_name = factor(gsub("V", "", Vscientific_name), levels=1:15)
+  )
