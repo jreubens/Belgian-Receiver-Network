@@ -27,7 +27,7 @@ library(ggplot2)
 library(dplyr)
 library(base)
 library(lubridate)
-
+detach("dplyr")
 
 Using these packages we will construct a simple map of the sampled region (Southern Bight, Thames estuary and Eastern English Channel).
 
@@ -128,7 +128,7 @@ ggplot() +
 }  
 
 plot_map()
-
+ggsave("plot_map.png")
 
 #### 1.4 Add deployment information ####
 # open deployments
@@ -136,6 +136,7 @@ setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Metadata")
 stations<-read.csv("ETN_stations-open-deployments_BRN.csv", header=T, sep=",")
 head (stations)
 class (stations$collectioncode)
+dplyr::glimpse(stations)
 
 deployments <- read.csv("deployments_detections_counts.csv", header =T, sep=",")
 head (deployments)
@@ -147,8 +148,8 @@ head (species)
 #In the future They will be downloaded from the ETn database through the datacall
 
 plot_map() + 
-geom_point(data=stations, aes(x=stn_long, y=stn_lat, colour="station_name"),size=2)
-ggsave("map_active.png")
+geom_point(data=stations, aes(x=stn_long, y=stn_lat, colour=station_name),size=2)
+ggsave("map_active_041217_colouredprojects.png")
 
 #### 1.5 add statistics to each station on the map ####
 
@@ -171,6 +172,7 @@ station_count_BRN <- read.csv("station_count_BRN.csv", header =T, sep=",")
 
 # Thereafter plot the detections
 plot_map() + geom_point(data = station_count_BRN, aes(deploy_long,deploy_lat, size = det_count), colour = "red")
+ggsave("map_detectionsperstation_041217.png")
 
 ## Overlay Pie-chart
 # first select your data
@@ -203,18 +205,18 @@ colnames(species_cast)
 n <- nrow(species_cast)
 species_cast$radius <- 6 * abs(rnorm(n))
 
+cols2use <- c('Alosa fallax', 'Anguilla anguilla', 'Coregonus lavaretus', 
+              'Cyprinus carpio', 'Gadus morhua', 'Lampetra fluviatilis', 
+              'Leuciscus idus', 'Petromyzon marinus', 'Pleuronectes platessa', 
+              'Rutilus rutilus', 'Salmo salar', 'Silurus glanis', 
+              'Squalius cephalus')
 
 ## try to make a pie chart scatter plot... Does not work yet
 plot <- plotmap() +  geom_scatterpie(aes(x=deploy_lat, y=deploy_long, group=station_name), data=species_cast, 
-                  cols=c('Alosa fallax','Anguilla anguilla','Coregonus lavaretus','Cyprinus carpio', 
-                         'Gadus morhua', 'Lampetra fluviatilis', 'Leuciscus idus', 'Petromyzon marinus', 
-                         'Pleuronectes platessa', 'Rutilus rutilus', 'Salmo salar', 'Silurus glanis', 
-                         'Squalius cephalus'),color=NA, alpha=.8) +
+                  cols=cols2use,color=NA, alpha=.8) +
   coord_equal()
 
 plot + geom_scatterpie_legend(species_cast$radius, x=-160, y=-55) # geen idee wat x en y hier betekenen..
-
-
 
 ## tweede methode 
 #pie <- ggplot(test, aes(x="", y=sum_ind, fill=scientific_name))+
@@ -270,11 +272,12 @@ heatmap <- ggplot(table, aes(year, scientific_name)) +
       scale_fill_gradient2(low = "white",high = "steel blue")+
       geom_text(aes(label = Tagged))
 heatmap
+ggsave("occurence.facet.png")
 
 
 #improve layout
 
 heatmap + theme_grey(base_size = 11)  +
     labs(x = "", y = "") +
-    theme(axis.text.x = element_text(size = 11, angle = 330, colour = "grey50"))
+    theme(axis.text. = element_text(size = 11, angle = 330, colour = "grey50"))
 
