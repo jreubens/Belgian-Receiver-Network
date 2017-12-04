@@ -233,6 +233,10 @@ plot + geom_scatterpie_legend(species_cast$radius, x=-160, y=-55) # geen idee wa
 # We will use a type of heatmap to do so...
 # See https://learnr.wordpress.com/2010/01/26/ggplot2-quick-heatmap-plotting/ and https://stackoverflow.com/questions/14290364/heatmap-with-values-ggplot2 for info
 
+  
+library(tidyverse)
+library (tibble)
+  
 # Example data of nba players 
 nba <- read.csv("http://datasets.flowingdata.com/ppg2008.csv")
 nba.m <- melt(nba)
@@ -259,30 +263,18 @@ table <- table %>%
   filter(scientific_name != "Built-in")%>%
   filter(scientific_name != "Sync tag")
 
+table[is.na(table)] <- 0
 
 heatmap <- ggplot(table, aes(year, scientific_name)) + 
       geom_tile(aes(fill = Observed), colour = "white") + 
-      scale_fill_gradient(low = "white",high = "steel blue")
+      scale_fill_gradient2(low = "white",high = "steel blue")+
+      geom_text(aes(label = Tagged))
 heatmap
 
 
 #improve layout
 
-heatmap + theme_grey(base_size = 11) + 
-    labs(x = "", y = "") + 
-    scale_x_discrete(expand = c(0, 0)) +
-    scale_y_discrete(expand = c(0, 0)) +
+heatmap + theme_grey(base_size = 11)  +
+    labs(x = "", y = "") +
     theme(axis.text.x = element_text(size = 11, angle = 330, colour = "grey50"))
 
-
-# add numbers to the table
-library(tidyverse)
-
-table2 <- table %>%
-  tbl_df() %>%
-  rownames_to_column('year') %>%
-  gather(scientific_name, count, -year) %>%
-  mutate(
-    year = factor(year, levels=1:8),
-    scientific_name = factor(gsub("V", "", Vscientific_name), levels=1:15)
-  )
