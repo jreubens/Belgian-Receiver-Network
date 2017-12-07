@@ -16,6 +16,9 @@
 #clear environment
 rm(list = ls())
 
+# source functions
+source("scale_bar_function.R")
+
 # install needed packages
 install.packages("maptools")
 library(maptools)
@@ -118,7 +121,7 @@ ggplot() +
         panel.grid.minor = element_line(linetype = "blank"),
         axis.title = element_blank(),
         axis.text = element_text(size = 16)) +
-  coord_map(xlim = c(2,6), ylim = c(50.5,52)) +
+  coord_map(xlim = c(2,6), ylim = c(50,52)) +
   geom_polygon(aes(x=long, y=lat, group=group), data = bightfort, fill = "white") +
   geom_polygon(aes(x=long, y=lat, group=group), data = netherlands_coastfort, fill = "gray87")+
   geom_path(data = riversfort, aes(x = long, y = lat, group=group), col = "gray98")+
@@ -150,6 +153,15 @@ head (species)
 plot_map() + 
 geom_point(data=stations, aes(x=stn_long, y=stn_lat, colour=station_name),size=2)
 ggsave("map_active_041217_colouredprojects.png")
+
+#Demer coordinaten verwijderen
+
+# Add North arrow and scalebar to map
+plot_map() + geom_point(data=stations, aes(x=stn_long, y=stn_lat, colour=station_name),size=2) +
+             scale_bar(lon = 5.2, lat = 50.1, distance_lon = 20, distance_lat = 5, distance_legend = 10, dist_unit = "km")
+
+    # if you don't want north arrow: add 'orientation=FALSE'
+  
 
 #### 1.5 add statistics to each station on the map ####
 
