@@ -16,11 +16,14 @@
 #clear environment
 rm(list = ls())
 
-# source functions
+# source functions used in this script
+setwd ("/data/home/janr/Belgian-Receiver-Network/Scripts")
 source("scale_bar_function.R")
 
-# install needed packages
-install.packages("maptools")
+# get info on your session: R-version, packages attached
+sessionInfo()
+
+# install extra needed packages (not yet attached)
 library(maptools)
 library(ggmap)
 library(rgdal)
@@ -31,12 +34,15 @@ library(dplyr)
 library(base)
 library(lubridate)
 detach("dplyr")
+detach("package:dplyr", unload=TRUE)
 
 Using these packages we will construct a simple map of the sampled region (Southern Bight, Thames estuary and Eastern English Channel).
 
 #### 1.1 Read shapefiles ####
 
 #A common data format for geospatial data is the shapefile. In a shapefile, geospatial data are described as points, lines and polygons and can be analysed as such in GIS software. [Marine Regions](http://www.marineregions.org/) provides access to many shapefiles through the [gazetteer](http://www.marineregions.org/gazetteer.php?p=search). The folder **shapefiles** contains some useful shapefiles.
+
+# have a look at https://cran.r-project.org/web/packages/mregions/vignettes/mregions.html!
 
 list.files("Shapefiles")
 
@@ -46,13 +52,12 @@ list.files("Shapefiles")
 #Below you can find a ways to import it into the R Environment. The recommended **readOGR()** recognizes the type of spatial data automatically.
 
 setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Shapefiles")
-
-bight <- readOGR("Files/Shapefiles/world_bay_gulf", layer = "world_bay_gulf")
-channel <-readOGR("Files/Shapefiles/iho", layer = "iho")
-rivers <-readOGR("Files/Shapefiles/Rivers", layer = "BNLF_Water_2004")
-buurlanden <-readOGR("Files/Shapefiles/Buurlanden", layer = "B_Buurlanden_2008")
-netherlands_coast <- readOGR("Files/Shapefiles/netherlands_coast", layer = "world_countries_coasts")
-boundary <-readOGR("Files/Shapefiles/Belgian-border", layer = "bnful")
+bight <- readOGR("world_bay_gulf", layer = "world_bay_gulf")
+channel <-readOGR("iho", layer = "iho")
+rivers <-readOGR("Rivers", layer = "BNLF_Water_2004")
+buurlanden <-readOGR("Buurlanden", layer = "B_Buurlanden_2008")
+netherlands_coast <- readOGR("netherlands_coast", layer = "world_countries_coasts")
+boundary <-readOGR("Belgian-border", layer = "bnful")
 
 
 #Looking at the class, structure and plot of the shapefile allows to better understand the data type. Output is not given in this document due its large size
@@ -74,8 +79,8 @@ plot(netherlands_coast)
 bightfort <- fortify(bight)
 str(bightfort)
 riversfort <- fortify(rivers)
-channelfort <- fortify(channel)
-buurlandenfort <- fortify(buurlanden)
+#channelfort <- fortify(channel)
+#buurlandenfort <- fortify(buurlanden)
 netherlands_coastfort <- fortify(netherlands_coast)
 boundaryfort <- fortify(boundary)
 
@@ -84,22 +89,22 @@ boundaryfort <- fortify(boundary)
 #Now, we can add more information on this plot, for example the Economic Exclusive zones for UK, The Netherlands, France and Belgium.
 
 # EEZ 
-Beez <- readOGR("Files/Shapefiles/Belgian eez/eez.shp")
-Feez <- readOGR("Files/Shapefiles/French eez/eez.shp")
-Eeez <- readOGR("Files/Shapefiles/United Kingdom eez/eez.shp")
-Deez <- readOGR("Files/Shapefiles/Dutch eez/eez.shp")
+Beez <- readOGR("Belgian eez/eez.shp")
+#Feez <- readOGR("French eez/eez.shp")
+#Eeez <- readOGR("United Kingdom eez/eez.shp")
+#Deez <- readOGR("Dutch eez/eez.shp")
 Beezfort <- fortify(Beez)
-Feezfort <- fortify(Feez)
-Eeezfort <- fortify(Eeez)
-Deezfort <- fortify(Deez)
+#Feezfort <- fortify(Feez)
+#Eeezfort <- fortify(Eeez)
+#Deezfort <- fortify(Deez)
 
 
 # Sandbanks
-sandbanks <- readOGR("Files/Shapefiles/Sandbanks/Southernbight_banks.shp")
+sandbanks <- readOGR("Sandbanks/Southernbight_banks.shp")
 sandfort <- fortify(sandbanks)
 
 
-#### 1.4 Make a funtion of your map
+#### 1.4 Make a funtion of your map ####
 # If you have your basic map. Make a fucntion of it, to easily add/update this map.
 
 # option 1 --> use Google maps
@@ -121,7 +126,7 @@ ggplot() +
         panel.grid.minor = element_line(linetype = "blank"),
         axis.title = element_blank(),
         axis.text = element_text(size = 16)) +
-  coord_map(xlim = c(2,6), ylim = c(50,52)) +
+  coord_map(xlim = c(2,6), ylim = c(50.5,52)) +
   geom_polygon(aes(x=long, y=lat, group=group), data = bightfort, fill = "white") +
   geom_polygon(aes(x=long, y=lat, group=group), data = netherlands_coastfort, fill = "gray87")+
   geom_path(data = riversfort, aes(x = long, y = lat, group=group), col = "gray98")+
@@ -131,9 +136,11 @@ ggplot() +
 }  
 
 plot_map()
+
+setwd ("/data/home/janr/Belgian-Receiver-Network/Figures")
 ggsave("plot_map.png")
 
-#### 1.4 Add deployment information ####
+#### 1.5 Add deployment information ####
 # open deployments
 setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Metadata")
 stations<-read.csv("ETN_stations-open-deployments_BRN.csv", header=T, sep=",")
@@ -149,10 +156,14 @@ head (species)
 
 #Now the stations need to be added to the map 
 #In the future They will be downloaded from the ETn database through the datacall
+plot_map() + 
+  geom_point(data=stations, aes(x=stn_long, y=stn_lat),size=2)
+ggsave("map_active_050218.png")
+
 
 plot_map() + 
-geom_point(data=stations, aes(x=stn_long, y=stn_lat, colour=station_name),size=2)
-ggsave("map_active_041217_colouredprojects.png")
+  geom_point(data=stations, aes(x=stn_long, y=stn_lat, colour=station_name),size=2)
+ggsave("map_active_050218_colouredprojects.png")
 
 #Demer coordinaten verwijderen
 
@@ -161,7 +172,7 @@ plot_map() + geom_point(data=stations, aes(x=stn_long, y=stn_lat, colour=station
              scale_bar(lon = 5.2, lat = 50.1, distance_lon = 20, distance_lat = 5, distance_legend = 10, dist_unit = "km")
 
     # if you don't want north arrow: add 'orientation=FALSE'
-  
+## Remark: komt er momenteel niet op, doordat je met verschillende lagen werkt... --> hoe oplossen?
 
 #### 1.5 add statistics to each station on the map ####
 
@@ -250,6 +261,7 @@ plot + geom_scatterpie_legend(species_cast$radius, x=-160, y=-55) # geen idee wa
   
 library(tidyverse)
 library (tibble)
+library(dplyr)
   
 # Example data of nba players 
 nba <- read.csv("http://datasets.flowingdata.com/ppg2008.csv")
@@ -259,7 +271,7 @@ nba.m <- melt(nba)
 # our table
 # First prepare datasets to correct format
 setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Metadata")
-species_det <- read.csv("speciesperyear_count.csv", header =T, sep=",")
+species_det <- read.csv("speciesperyear_count_update.csv", header =T, sep=";")
 species_tag <- read.csv("speciesperyear_tagged.csv", header = T, sep=",")
 
 species_tag2 <- species_tag %>%
@@ -284,8 +296,8 @@ heatmap <- ggplot(table, aes(year, scientific_name)) +
       scale_fill_gradient2(low = "white",high = "steel blue")+
       geom_text(aes(label = Tagged))
 heatmap
-ggsave("occurence.facet.png")
-
+setwd ("/data/home/janr/Belgian-Receiver-Network/Figures")
+ggsave("occurence.facet050218.png")
 
 #improve layout
 
