@@ -208,16 +208,25 @@ station_count <- deployments %>%
 head(station_count)
 
 # Save and filter what is needed for BRN
-setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Output")
-write.csv(station_count, file = "station_count.csv")
+#setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Output")
+write.csv(station_count, file = "./Files/Output/station_count.csv")
 
-setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Metadata")
-station_count_BRN <- read.csv("station_count_BRN.csv", header =T, sep=",")
+#setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Metadata")
+station_count_BRN <- read.csv("./Files/Metadata/station_count_BRN.csv", header =T, sep=",")
 
 
 # Thereafter plot the detections
-plot_map() + geom_point(data = station_count_BRN, aes(deploy_long,deploy_lat, size = det_count), colour = "red")
-ggsave("map_detectionsperstation_041217.png")
+# Add png of arrow to plot (dirty coding...)
+img <-  readPNG("./Figures/arrow.png")     
+ger <- grid::rasterGrob(img, interpolate=TRUE)
+map <- plot_map() + 
+  geom_point(data = station_count_BRN, aes(deploy_long,deploy_lat, size = det_count), colour = "red")
+h <- ggdraw(map)                                # Overlay png on plot
+h + draw_grob(ger, 0.905, 0.755, 0.10, 0.15)    # Tweak the position
+
+#ggsave("map_detectionsperstation_041217.png")
+# Instead of ggsave(), manually save plot (export button in plot window) as svg file and move scale bar with inkscape to wanted position
+
 
 ## Overlay Pie-chart
 # first select your data
