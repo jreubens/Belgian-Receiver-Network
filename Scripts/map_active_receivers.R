@@ -17,8 +17,9 @@
 rm(list = ls())
 
 # source functions used in this script
-setwd ("/data/home/janr/Belgian-Receiver-Network/Scripts")
-source("scale_bar_function.R")
+#setwd ("/data/home/janr/Belgian-Receiver-Network/Scripts")
+#source("scale_bar_function.R")
+source('./Scripts/scale_bar_function.R')
 
 # get info on your session: R-version, packages attached
 sessionInfo()
@@ -33,10 +34,13 @@ library(ggplot2)
 library(dplyr)
 library(base)
 library(lubridate)
+library(ggsn)    # Package to create scale bar
+library(png)     # Package to upload arrow png
+library(cowplot) # Package to add the arrow png to the map
 detach("dplyr")
 detach("package:dplyr", unload=TRUE)
 
-Using these packages we will construct a simple map of the sampled region (Southern Bight, Thames estuary and Eastern English Channel).
+#Using these packages we will construct a simple map of the sampled region (Southern Bight, Thames estuary and Eastern English Channel).
 
 #### 1.1 Read shapefiles ####
 
@@ -51,13 +55,13 @@ list.files("Shapefiles")
 #The iho folder and file contains the shapefile of the [English Channel](http://www.marineregions.org/gazetteer.php?p=details&id=2389).
 #Below you can find a ways to import it into the R Environment. The recommended **readOGR()** recognizes the type of spatial data automatically.
 
-setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Shapefiles")
-bight <- readOGR("world_bay_gulf", layer = "world_bay_gulf")
-channel <-readOGR("iho", layer = "iho")
-rivers <-readOGR("Rivers", layer = "BNLF_Water_2004")
-buurlanden <-readOGR("Buurlanden", layer = "B_Buurlanden_2008")
-netherlands_coast <- readOGR("netherlands_coast", layer = "world_countries_coasts")
-boundary <-readOGR("Belgian-border", layer = "bnful")
+#setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Shapefiles")
+bight <- readOGR("./Files/Shapefiles/world_bay_gulf", layer = "world_bay_gulf")
+channel <-readOGR("./Files/Shapefiles/iho", layer = "iho")
+rivers <-readOGR("./Files/Shapefiles/Rivers", layer = "BNLF_Water_2004")
+buurlanden <-readOGR("./Files/Shapefiles/Buurlanden", layer = "B_Buurlanden_2008")
+netherlands_coast <- readOGR("./Files/Shapefiles/netherlands_coast", layer = "world_countries_coasts")
+boundary <-readOGR("./Files/Shapefiles/Belgian-border", layer = "bnful")
 
 
 #Looking at the class, structure and plot of the shapefile allows to better understand the data type. Output is not given in this document due its large size
@@ -89,7 +93,7 @@ boundaryfort <- fortify(boundary)
 #Now, we can add more information on this plot, for example the Economic Exclusive zones for UK, The Netherlands, France and Belgium.
 
 # EEZ 
-Beez <- readOGR("Belgian eez/eez.shp")
+Beez <- readOGR("./Files/Shapefiles/Belgian eez/eez.shp")
 #Feez <- readOGR("French eez/eez.shp")
 #Eeez <- readOGR("United Kingdom eez/eez.shp")
 #Deez <- readOGR("Dutch eez/eez.shp")
@@ -100,8 +104,8 @@ Beezfort <- fortify(Beez)
 
 
 # Sandbanks
-sandbanks <- readOGR("Sandbanks/Southernbight_banks.shp")
-sandfort <- fortify(sandbanks)
+#sandbanks <- readOGR("Sandbanks/Southernbight_banks.shp")
+#sandfort <- fortify(sandbanks)
 
 
 #### 1.4 Make a funtion of your map ####
@@ -131,41 +135,59 @@ ggplot() +
   geom_polygon(aes(x=long, y=lat, group=group), data = netherlands_coastfort, fill = "gray87")+
   geom_path(data = riversfort, aes(x = long, y = lat, group=group), col = "gray98")+
   geom_path(data = Beezfort, aes(x = long, y = lat, group=group), col = "gray18")+
-  geom_path(data = sandfort, aes (x= long, y= lat, group=group), col = "gray87")+
-  geom_path(data = boundaryfort,aes (x= long, y= lat, group =group), col = "gray22")
+  #geom_path(data = sandfort, aes (x= long, y= lat, group=group), col = "gray87")+
+  geom_path(data = boundaryfort,aes (x= long, y= lat, group =group), col = "gray22")+
+  scalebar(Beezfort, location = "bottomleft", dist = 50, st.size=5, height=0.05, dd2km = TRUE, model = 'WGS84')
 }  
 
 plot_map()
 
-setwd ("/data/home/janr/Belgian-Receiver-Network/Figures")
-ggsave("plot_map.png")
+#setwd ("/data/home/janr/Belgian-Receiver-Network/Figures")
+ggsave("./Figures/plot_map.png")
 
 #### 1.5 Add deployment information ####
 # open deployments
-setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Metadata")
-stations<-read.csv("ETN_stations-open-deployments_BRN.csv", header=T, sep=",")
+#setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Metadata")
+stations<-read.csv("./Files/Metadata/ETN_stations-open-deployments_BRN.csv", header=T, sep=",")
 head (stations)
 class (stations$collectioncode)
 dplyr::glimpse(stations)
+# Don't take Demer stations into account (project ended)
+stations <- stations %>%
+  filter(station_name == "albert"|
+         station_name == "zeeschelde"|
+         station_name == "bpns"|
+         station_name == "ws1"|
+         station_name == "ws2"|
+         station_name == "ws3"|
+         station_name == "Dijle")
 
-deployments <- read.csv("deployments_detections_counts.csv", header =T, sep=",")
+deployments <- read.csv("./Files/Metadata/deployments_detections_counts.csv", header =T, sep=",")
 head (deployments)
 
-species <- read.csv("deployments-species-individuals-count.csv", header =T, sep=",")
+species <- read.csv("./Files/Metadata/deployments-species-individuals-count.csv", header =T, sep=",")
 head (species)
 
 #Now the stations need to be added to the map 
 #In the future They will be downloaded from the ETn database through the datacall
-plot_map() + 
-  geom_point(data=stations, aes(x=stn_long, y=stn_lat),size=2)
-ggsave("map_active_050218.png")
+# Add png of arrow to plot (dirty coding...)
+img <-  readPNG("./Figures/arrow.png")     
+ger <- grid::rasterGrob(img, interpolate=TRUE)
+map <- plot_map() + 
+      geom_point(data=stations, aes(x=stn_long, y=stn_lat),size=2)
+h <- ggdraw(map)                                # Overlay png on plot
+h + draw_grob(ger, 0.905, 0.755, 0.10, 0.15)    # Tweak the position
+
+
+#ggsave("./Figures/map_active_PV.png")
+# Instead of ggsave(), manually save plot (export button in plot window) as svg file and move scale bar with inkscape to wanted position
 
 
 plot_map() + 
   geom_point(data=stations, aes(x=stn_long, y=stn_lat, colour=station_name),size=2)
-ggsave("map_active_050218_colouredprojects.png")
+ggsave("./Figures/map_active_050218_colouredprojects_PV.png")
 
-#Demer coordinaten verwijderen
+#Demer coordinaten verwijderen  --> zie lijn 151
 
 # Add North arrow and scalebar to map
 plot_map() + geom_point(data=stations, aes(x=stn_long, y=stn_lat, colour=station_name),size=2) +
