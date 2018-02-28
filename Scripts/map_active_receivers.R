@@ -190,8 +190,8 @@ ggsave("./Figures/map_active_050218_colouredprojects_PV.png")
 #Demer coordinaten verwijderen  --> zie lijn 151
 
 # Add North arrow and scalebar to map
-plot_map() + geom_point(data=stations, aes(x=stn_long, y=stn_lat, colour=station_name),size=2) +
-             scale_bar(lon = 5.2, lat = 50.1, distance_lon = 20, distance_lat = 5, distance_legend = 10, dist_unit = "km")
+#plot_map() + geom_point(data=stations, aes(x=stn_long, y=stn_lat, colour=station_name),size=2) +
+#             scale_bar(lon = 5.2, lat = 50.1, distance_lon = 20, distance_lat = 5, distance_legend = 10, dist_unit = "km")
 
     # if you don't want north arrow: add 'orientation=FALSE'
 ## Remark: komt er momenteel niet op, doordat je met verschillende lagen werkt... --> hoe oplossen?
