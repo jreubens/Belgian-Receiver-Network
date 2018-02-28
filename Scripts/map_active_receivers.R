@@ -290,9 +290,9 @@ plot + geom_scatterpie_legend(species_cast$radius, x=-160, y=-55) # geen idee wa
 # See https://learnr.wordpress.com/2010/01/26/ggplot2-quick-heatmap-plotting/ and https://stackoverflow.com/questions/14290364/heatmap-with-values-ggplot2 for info
 
   
-library(tidyverse)
-library (tibble)
-library(dplyr)
+library(tidyverse)    # tidyverse is een pakket van packages waarin o.a. tibble en dplyr zitten, dus niet nodig om die nog eens apart in te laden
+#library (tibble)
+#library(dplyr)
   
 # Example data of nba players 
 nba <- read.csv("http://datasets.flowingdata.com/ppg2008.csv")
@@ -301,9 +301,18 @@ nba.m <- melt(nba)
 
 # our table
 # First prepare datasets to correct format
-setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Metadata")
-species_det <- read.csv("speciesperyear_count_update.csv", header =T, sep=";")
-species_tag <- read.csv("speciesperyear_tagged.csv", header = T, sep=",")
+#setwd ("/data/home/janr/Belgian-Receiver-Network/Files/Metadata")
+species_det <- read.csv("./Files/Metadata/speciesperyear_count_update.csv", header =T, sep=";")
+species_tag <- read.csv("./Files/Metadata/speciesperyear_tagged.csv", header = T, sep=",")
+
+# Change "salmo salar" into "Salmo salar"
+table(species_det$scientific_name)
+species_det$scientific_name[species_det$scientific_name == "salmo salar"] <- "Salmo salar"
+
+table(species_tag$scientific_name)
+species_tag$scientific_name[species_tag$scientific_name == "salmo salar"] <- "Salmo salar"
+
+
 
 species_tag2 <- species_tag %>%
   filter(project != "Amsterdam")%>%
@@ -322,13 +331,21 @@ table <- table %>%
 
 table[is.na(table)] <- 0
 
-heatmap <- ggplot(table, aes(year, scientific_name)) + 
+# Change column name
+colnames(table) [1] <- "Year"      # Capital 'Y'
+colnames(table) [2] <- "Species"   # Change to "Species"
+
+heatmap <- ggplot(table, aes(Year, Species)) + 
       geom_tile(aes(fill = Observed), colour = "white") + 
       scale_fill_gradient2(low = "white",high = "steel blue")+
-      geom_text(aes(label = Tagged))
+      geom_text(aes(label = Tagged)) +
+      theme(axis.text.y=element_text(face="italic"))       # Set species names in italic
 heatmap
-setwd ("/data/home/janr/Belgian-Receiver-Network/Figures")
-ggsave("occurence.facet050218.png")
+
+#setwd ("/data/home/janr/Belgian-Receiver-Network/Figures")
+ggsave("./Figures/occurence.facet050218_PV.png")
+
+
 
 #improve layout
 
