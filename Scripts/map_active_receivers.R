@@ -339,11 +339,15 @@ heatmap <- ggplot(table, aes(Year, Species)) +
       geom_tile(aes(fill = Observed), colour = "white") + 
       scale_fill_gradient2(low = "white",high = "steel blue")+
       geom_text(aes(label = Tagged)) +
+      theme_grey(base_size = 11)  +
+      theme(axis.title=element_text(size=14)) +
+      theme(axis.text=element_text(size=12)) +
       theme(axis.text.y=element_text(face="italic"))       # Set species names in italic
 heatmap
 
 #setwd ("/data/home/janr/Belgian-Receiver-Network/Figures")
 ggsave("./Figures/occurence.facet050218_PV.png")
+
 
 
 
